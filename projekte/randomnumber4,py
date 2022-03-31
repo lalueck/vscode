@@ -1,0 +1,116 @@
+from collections import Counter
+import random
+
+def numOnlyUserInput(text):
+    x = 1
+    while x == 1:
+        try:
+            userInput = int(input(text))
+            x=0
+        except ValueError:
+            print("Input is not a number, please try again")
+            x = 1
+    return(userInput)
+
+def userInputCheck(userInput, max):
+    if userInput > max:
+        return(0)
+    else:
+        return(1)
+
+def makeListOfNumbers(userInputMin, userInputMax, userInputNum):
+    listOfNumbers = []
+    for _ in range (userInputNum):
+        rand = random.randint(userInputMin, userInputMax)
+        listOfNumbers.append(rand)
+    print(listOfNumbers)
+    return(listOfNumbers)
+
+def populate2dArray(listOfNumbers,userInputNum):
+    _2dArray = []
+    b = 0 #counter for while loop
+    while b <= userInputNum:#while loop runs till userInputNum is matched
+        counted = 0 #resets conted in the loop before its needed again
+        counted = listOfNumbers.count(b) #counts the number of numbers of B
+        _2dArray.append([b, counted]) #attempts to append both the current number (B) and the amount it shows up in the listOfNumbers to _2dArray
+        b = b + 1 #increments the counter B to go to the next number
+    return(_2dArray)
+
+def populate3dArray(userInputMax, _2dArray, _3dArray):
+    currentNum = 0 #the number currently getting worked on form the first column
+    _3dPos = 0 #the current position in the row
+    amountX = 0 #the amount of x's that need to get added
+    while currentNum <= userInputMax: #loops till all numbers have been checked
+        amountX = _2dArray[currentNum][1]#amount of times the number show up in listOfNumbers
+        _3dPos = 0
+        while _3dPos < amountX: #loops till there are no more x's to add
+            _3dArray [currentNum] [_3dPos] = 1 #replaces the 0 in the empty _3dArray with 1 in the current colum and the current row
+            _3dPos = _3dPos + 1 #increass postion of _3dPos
+        currentNum = currentNum + 1
+    return(_3dArray)
+
+def convert3dArray(userInputMax,biggestNumber,_3dArray):
+    currentNum = 0 #the number currently getting worked on form the first column
+    _3dPos = 0 #the current position in the row
+    while currentNum < userInputMax+1: #loops till all numbers have been checked
+        _3dPos = 0
+        while _3dPos < biggestNumber: #loops till there are no more x's to add
+            #_3dArray [currentNum] [_3dPos] = 1 #replaces the 0 in the empty _3dArray with 1 in the current colum and the current row
+            if _3dArray[currentNum][_3dPos] == 1:
+                _3dArray[currentNum] [_3dPos] = " X"
+            elif _3dArray[currentNum][_3dPos] == 0:
+                _3dArray[currentNum][_3dPos] = "  "
+            _3dPos = _3dPos + 1 #increass postion of _3dPos
+        currentNum = currentNum + 1
+    return(_3dArray)
+
+def output(biggestNumber,userInputMax,inputArray):
+    print
+    posCol = 0
+    posRow = 0
+    while posRow < biggestNumber:
+        while posCol <= userInputMax:
+            print(inputArray[posRow][posCol],"|", end='', sep='')
+            posCol = posCol+1
+        print()
+        posRow = posRow+1
+        posCol = 0
+    n = 0
+    while n <= userInputMax:
+        if n < 10:
+            print("0",n,"|", end = '', sep='')
+            n = n + 1
+        else:
+            print(n,"|", end = '', sep='')
+            n = n + 1
+
+
+def getBiggestNumber(listOfNumbers):
+    c = Counter(listOfNumbers)
+    biggestAmount = c.most_common(1)
+    bigg2 = int(biggestAmount[0][1])
+    return(bigg2)
+
+def make3dArray(biggestNumber,userInputMax):
+    _3dArray = []
+    _3dArray = [[0]*biggestNumber for _ in range(userInputMax+1)] #https://stackoverflow.com/questions/4230000/creating-a-2d-matrix-in-python
+    return(_3dArray)
+
+def rotateArray(inputArray):
+    rotated = list(reversed(list(zip(*inputArray)))) #https://stackoverflow.com/questions/8421337/rotating-a-two-dimensional-array-in-python
+    return(rotated)
+
+def main():
+    userInputMin = numOnlyUserInput("minimum")
+    userInputMax = numOnlyUserInput("maximum")
+    userInputNum = numOnlyUserInput("number")
+    listOfNumbers = makeListOfNumbers(userInputMin, userInputMax, userInputNum)
+    _2dArray = populate2dArray(listOfNumbers,userInputNum)
+    biggestNumber = getBiggestNumber(listOfNumbers)
+    _3dArray = make3dArray(biggestNumber,userInputMax)
+    _3dArray = populate3dArray(userInputMax,_2dArray,_3dArray)
+    _3dArray = convert3dArray(userInputMax,biggestNumber,_3dArray)
+    _3dArray = rotateArray(_3dArray)
+    output(biggestNumber,userInputMax,_3dArray)
+
+main()
